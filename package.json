@@ -14,7 +14,8 @@
     "@middy/http-json-body-parser": "^2.5.3",
     "@types/uuid": "^8.3.1",
     "aws-sdk": "^2.1030.0",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "validate.js": "^0.13.1"
   },
   "devDependencies": {
     "@serverless/typescript": "^2.23.0",

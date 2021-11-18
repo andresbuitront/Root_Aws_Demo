@@ -7,6 +7,8 @@
     "noUnusedParameters": true,
     "removeComments": true,
     "sourceMap": true,
+    "resolveJsonModule": true,
+    "allowSyntheticDefaultImports": true,
     "target": "ES2020",
     "outDir": "lib"
   },

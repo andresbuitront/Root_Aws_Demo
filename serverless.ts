@@ -1,9 +1,11 @@
 import type { AWS } from '@serverless/typescript';
 
 import hello from '@functions/hello';
+import queue from '@functions/queue';
 
 // DynamoDB
 import dynamoDbTables from './resources/dynamodb-tables';
+import sqsQueues from './resources/sqs-queues';
 
 const serverlessConfiguration: AWS = {
   service: 'root-aws-demo',
@@ -14,6 +16,7 @@ const serverlessConfiguration: AWS = {
     stage: '${opt:stage, self:provider.stage}',
     list_table: '${self:service}-list-table-${opt:stage, self:provider.stage}',
     tasks_table: '${self:service}-tasks-table-${opt:stage, self:provider.stage}',
+    custom_queue_name: '${self:service}-custom-queue-${opt:stage, self:provider.stage}',
     table_throughputs: {
       prod: 5,
       default: 1,
@@ -74,6 +77,9 @@ const serverlessConfiguration: AWS = {
       STAGE: '${self:custom.stage}',
       LIST_TABLE: '${self:custom.list_table}',
       TASKS_TABLE: '${self:custom.tasks_table}',
+      QUEUE_URL: {
+        Ref:'TestQueue'
+      }
     },
     lambdaHashingVersion: '20201221',
     iamRoleStatements: [
@@ -92,14 +98,26 @@ const serverlessConfiguration: AWS = {
           {"Fn::GetAtt": [ 'ListTable', 'Arn' ]},
           {"Fn::GetAtt": [ 'TasksTable', 'Arn' ]}
         ]
+      },
+      {
+        Effect: 'Allow',
+        Action: [
+            'sqs:SendMessage',
+            'sqs:ReceiveMessage',
+            'sqs:DeleteMessage',
+            'sqs:GetQueueUrl',
+        ],
+        Resource: [
+          { "Fn::GetAtt": ['TestQueue', 'Arn'] }
+        ]
       }
     ]
   },
   resources: {
-    Resources: dynamoDbTables,
+    Resources: {...dynamoDbTables, ...sqsQueues},
   },
   // import the function via paths
-  functions: { hello }
+  functions: { hello, queue }
 
 
 
